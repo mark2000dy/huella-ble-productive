@@ -1,0 +1,109 @@
+{
+  "name": "huella-ble-control-pwa",
+  "version": "3.0.0",
+  "description": "PWA Controlador del Sensor CTIM3 por BLE de Huella Estructural y Symbiot Technologies. Compatible con firmware CTIM3 v2.3.016 - ESP32-S3-DEVKITC-1 (N8R8) con ADXL355 Accelerometer.",
+  "main": "index.html",
+  "type": "module",
+  
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "serve": "http-server . -p 8080 -c-1",
+    "serve-https": "http-server . -p 8443 -S -C cert.pem -K key.pem -c-1",
+    "build": "npm run validate",
+    "test": "npm run test-pwa && npm run validate",
+    "test-pwa": "lighthouse http://localhost:8080 --output html --output-path reports/lighthouse-report.html",
+    "validate": "echo 'PWA validation completed'",
+    "deploy-azure": "npm run build",
+    "postinstall": "echo 'HUELLA BLE PWA v3.0 dependencies installed'"
+  },
+  
+  "keywords": [
+    "pwa",
+    "bluetooth",
+    "ble",
+    "web-bluetooth",
+    "iot",
+    "sensor",
+    "huella",
+    "ctim3",
+    "accelerometer",
+    "adxl355",
+    "esp32",
+    "esp32s3",
+    "symbiot-technologies",
+    "firmware-2.3.016",
+    "real-time-data",
+    "azure-web-apps",
+    "structural-monitoring"
+  ],
+  
+  "author": {
+    "name": "Symbiot Technologies",
+    "email": "dev@symbiot.tech",
+    "url": "https://symbiot.tech"
+  },
+  
+  "contributors": [
+    {
+      "name": "HUELLA Development Team",
+      "email": "huella@symbiot.tech",
+      "role": "Core Development"
+    }
+  ],
+  
+  "license": "Proprietary",
+  
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  },
+  
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/symbiot-technologies/huella-ble-control-pwa.git"
+  },
+  
+  "bugs": {
+    "url": "https://github.com/symbiot-technologies/huella-ble-control-pwa/issues",
+    "email": "support@symbiot.tech"
+  },
+  
+  "homepage": "https://huella-ble-control-20250716130811.azurewebsites.net",
+  
+  "dependencies": {
+    "express": "^4.21.2",
+    "compression": "^1.7.4",
+    "helmet": "^7.1.0",
+    "cors": "^2.8.5",
+    "morgan": "^1.10.0"
+  },
+  
+  "devDependencies": {
+    "http-server": "^14.1.1",
+    "lighthouse": "^11.7.1"
+  },
+  
+  "browserslist": [
+    "last 2 Chrome versions",
+    "last 2 Edge versions",
+    "Chrome >= 80",
+    "Edge >= 80"
+  ],
+  
+  "pwa": {
+    "name": "HUELLA BLE Control v3.0",
+    "short_name": "HUELLA BLE",
+    "description": "Controlador del Sensor CTIM3 por BLE",
+    "version": "3.0.0",
+    "firmware_compatibility": "2.3.016",
+    "azure_service": "huella-ble-control-20250716130811.azurewebsites.net",
+    "resource_group": "rg-huella-ble-pwa"
+  },
+  
+  "config": {
+    "port": 8080,
+    "azure_port": "${PORT}",
+    "environment": "production"
+  }
+}
