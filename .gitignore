@@ -1,0 +1,507 @@
+# ============================================================================
+# HUELLA BLE PWA v3.0 - GitIgnore Configuration
+# PWA Controlador del Sensor CTIM3 por BLE de Huella Estructural y Symbiot Technologies
+# Compatible con: Node.js 20+, Azure Web Apps, Firmware CTIM3 v2.3.016
+# ============================================================================
+
+# ============================================================================
+# NODE.JS
+# ============================================================================
+
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# nyc test coverage
+.nyc_output
+
+# Grunt intermediate storage
+.grunt
+
+# Bower dependency directory
+bower_components
+
+# node-waf configuration
+.lock-wscript
+
+# Compiled binary addons
+build/Release
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# Snowpack dependency directory
+web_modules/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional stylelint cache
+.stylelintcache
+
+# Microbundle cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variable files
+.env
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
+
+# parcel-bundler cache
+.cache
+.parcel-cache
+
+# Next.js build output
+.next
+out
+
+# Nuxt.js build / generate output
+.nuxt
+dist
+
+# Gatsby files
+.cache/
+public
+
+# Storybook build outputs
+.out
+.storybook-out
+storybook-static
+
+# Temporary folders
+tmp/
+temp/
+
+# ============================================================================
+# AZURE WEB APPS
+# ============================================================================
+
+# Azure Web Apps deployment files
+.deployment
+deploy.cmd
+deploy.sh
+
+# Azure Functions deployment
+.azure/
+.azurefunctions/
+
+# Azure DevOps
+.vsts-ci.yml
+
+# IIS Node logs
+iisnode/
+logs/
+
+# Azure App Service logs
+LogFiles/
+
+# Web.config transform files
+Web.Debug.config
+Web.Release.config
+
+# ============================================================================
+# PWA ESPECÍFICO
+# ============================================================================
+
+# Service Worker cache
+sw-precache-config.js
+sw-toolbox-config.js
+
+# PWA build artifacts
+manifest-*.json
+workbox-config.js
+
+# Lighthouse reports
+lighthouse-report.html
+lighthouse-report.json
+
+# PWA testing outputs
+reports/
+*.lighthouse.json
+
+# ============================================================================
+# DESARROLLO LOCAL
+# ============================================================================
+
+# Certificados SSL locales
+*.pem
+*.key
+*.crt
+*.p12
+cert/
+certificates/
+
+# Archivos de configuración local
+config.local.js
+config.local.json
+.env.local
+
+# Bases de datos locales
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs de desarrollo
+debug.log
+error.log
+access.log
+combined.log
+
+# ============================================================================
+# EDITOR / IDE
+# ============================================================================
+
+# Visual Studio Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+
+# Local History for Visual Studio Code
+.history/
+
+# Built Visual Studio Code Extensions
+*.vsix
+
+# JetBrains IDEs
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# Sublime Text
+*.sublime-workspace
+*.sublime-project
+
+# Atom
+.atom/
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Emacs
+*~
+\#*\#
+.\#*
+
+# ============================================================================
+# SISTEMA OPERATIVO
+# ============================================================================
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ============================================================================
+# DATOS Y RESPALDOS
+# ============================================================================
+
+# Archivos de datos exportados
+data/
+exports/
+backups/
+*.csv
+*.xlsx
+*.json.bak
+
+# Dumps de base de datos
+*.sql
+*.dump
+
+# Archivos temporales de testing
+test-data/
+mock-data/
+sample-*.json
+
+# ============================================================================
+# MULTIMEDIA Y ASSETS
+# ============================================================================
+
+# Archivos de imagen grandes
+*.psd
+*.ai
+*.sketch
+*.fig
+
+# Videos y audios
+*.mp4
+*.avi
+*.mov
+*.mp3
+*.wav
+
+# Archivos de fuente originales
+fonts/src/
+*.otf.src
+*.ttf.src
+
+# ============================================================================
+# DOCUMENTACIÓN Y REFERENCIAS
+# ============================================================================
+
+# Documentación temporal
+docs/temp/
+docs/draft/
+*.draft.md
+
+# Referencias y notas de desarrollo
+notes/
+TODO.md
+NOTES.md
+research/
+
+# ============================================================================
+# ANÁLISIS Y PROFILING
+# ============================================================================
+
+# Coverage reports
+coverage/
+.coverage
+htmlcov/
+
+# Performance analysis
+*.perf
+*.prof
+flame-graph.html
+
+# Bundle analysis
+bundle-analyzer-report.html
+stats.json
+
+# ============================================================================
+# DEPENDENCIAS ESPECÍFICAS DEL PROYECTO
+# ============================================================================
+
+# Chart.js customizations
+chart-*.js.custom
+
+# BLE testing mocks
+ble-mock/
+device-simulator/
+
+# Firmware binaries (si se incluyen)
+firmware/*.bin
+firmware/*.hex
+
+# Configuraciones de dispositivos
+device-configs/
+*.device.json
+
+# ============================================================================
+# ARCHIVOS DE BUILD Y DISTRIBUCIÓN
+# ============================================================================
+
+# Build outputs
+build/
+dist/
+out/
+
+# Package files
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+# Deployment packages
+deploy/
+release/
+publish/
+
+# ============================================================================
+# TESTING
+# ============================================================================
+
+# Test outputs
+test-results/
+test-output/
+.jest/
+
+# E2E testing
+cypress/screenshots/
+cypress/videos/
+playwright-report/
+
+# ============================================================================
+# MONITOREO Y LOGS
+# ============================================================================
+
+# Application logs
+*.log
+logs/
+log/
+
+# Crash dumps
+crash-*.dump
+core.*
+
+# Performance monitoring
+monitoring/
+metrics/
+
+# ============================================================================
+# CONFIGURACIONES SENSIBLES
+# ============================================================================
+
+# Claves y secretos (NUNCA commitear)
+secrets/
+keys/
+.secrets
+*.secret
+
+# Configuraciones de producción
+config.prod.js
+production.json
+
+# Certificados y credenciales
+*.pem
+*.key
+credentials.json
+auth.json
+
+# ============================================================================
+# ARCHIVOS ESPECÍFICOS DE HUELLA BLE
+# ============================================================================
+
+# Datos de calibración sensibles
+calibration-data/
+sensor-configs/
+
+# Logs de dispositivos BLE
+ble-logs/
+device-logs/
+
+# Sesiones de streaming guardadas
+streaming-sessions/
+recorded-data/
+
+# Configuraciones de usuario
+user-preferences.json
+device-history.json
+
+# ============================================================================
+# ARCHIVOS TEMPORALES
+# ============================================================================
+
+# Temporales del sistema
+*.tmp
+*.temp
+*.bak
+*.swp
+*.old
+
+# Archivos de lock
+*.lock
+package-lock.json.lock
+
+# Cache directories
+.cache/
+.tmp/
+.temp/
+
+# ============================================================================
+# ARCHIVOS QUE SÍ DEBEN INCLUIRSE (IMPORTANTES)
+# ============================================================================
+
+# Estos archivos son críticos y NO deben ignorarse:
+# !package.json
+# !manifest.json
+# !service-worker.js
+# !web.config
+# !server.js
+# !index.html
+# !favicon.svg
+# !icon-*.png
+# !css/
+# !js/
+# !README.md
+
+# ============================================================================
+# COMENTARIOS FINALES
+# ============================================================================
+
+# Este .gitignore está optimizado para:
+# - PWA con Service Workers
+# - Node.js 20+ con Express
+# - Azure Web Apps deployment
+# - Web Bluetooth development
+# - Real-time data streaming applications
+#
+# Mantener actualizado según las necesidades del proyecto
+# Versión: 3.0.0
+# Fecha: 2025-07-22
