@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+HUELLA BLE PWA v3.0 - Favicon SVG
+PWA Controlador del Sensor CTIM3 por BLE de Huella Estructural y Symbiot Technologies
+Compatible con: Firmware CTIM3 v2.3.016, Web Bluetooth, PWA
+Versión: 3.0.0
+Fecha: 2025-07-22
+-->
+<svg xmlns="http://www.w3.org/2000/svg" 
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     viewBox="0 0 512 512" 
+     width="512" 
+     height="512">
+  
+  <!-- Definiciones y gradientes -->
+  <defs>
+    <!-- Gradiente principal azul -->
+    <linearGradient id="mainGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00008B;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#4169E1;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0066CC;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Gradiente para el símbolo Bluetooth -->
+    <linearGradient id="bluetoothGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#E6F3FF;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Sombra para efectos de profundidad -->
+    <filter id="dropShadow">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-opacity="0.3"/>
+    </filter>
+    
+    <!-- Efecto de resplandor -->
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Fondo circular con gradiente -->
+  <circle cx="256" cy="256" r="240" 
+          fill="url(#mainGradient)" 
+          filter="url(#dropShadow)"/>
+  
+  <!-- Anillo interior decorativo -->
+  <circle cx="256" cy="256" r="210" 
+          fill="none" 
+          stroke="rgba(255,255,255,0.1)" 
+          stroke-width="2"/>
+  
+  <!-- Símbolo Bluetooth principal -->
+  <g transform="translate(256,256)" filter="url(#glow)">
+    <!-- Parte central del símbolo Bluetooth -->
+    <path d="M-20,-60 L20,-20 L-10,0 L20,20 L-20,60 L-20,20 L-40,40 L-40,-40 L-20,-20 Z" 
+          fill="url(#bluetoothGradient)" 
+          stroke="rgba(255,255,255,0.5)" 
+          stroke-width="2"/>
+  </g>
+  
+  <!-- Puntos indicadores de señal BLE -->
+  <g opacity="0.8">
+    <!-- Punto 1 -->
+    <circle cx="350" cy="220" r="8" fill="#4ECDC4">
+      <animate attributeName="opacity" 
+               values="0.3;1;0.3" 
+               dur="2s" 
+               repeatCount="indefinite"/>
+    </circle>
+    
+    <!-- Punto 2 -->
+    <circle cx="370" cy="256" r="6" fill="#45B7D1">
+      <animate attributeName="opacity" 
+               values="0.3;1;0.3" 
+               dur="2s" 
+               begin="0.5s"
+               repeatCount="indefinite"/>
+    </circle>
+    
+    <!-- Punto 3 -->
+    <circle cx="350" cy="292" r="8" fill="#4ECDC4">
+      <animate attributeName="opacity" 
+               values="0.3;1;0.3" 
+               dur="2s" 
+               begin="1s"
+               repeatCount="indefinite"/>
+    </circle>
+  </g>
+  
+  <!-- Texto HUELLA -->
+  <g transform="translate(256,380)">
+    <text x="0" y="0" 
+          text-anchor="middle" 
+          fill="white" 
+          font-family="'Segoe UI', Arial, sans-serif" 
+          font-size="36" 
+          font-weight="bold">
+      HUELLA
+    </text>
+  </g>
+  
+  <!-- Ondas de señal BLE (decorativas) -->
+  <g opacity="0.4">
+    <!-- Onda 1 -->
+    <path d="M 300 256 Q 320 240 340 256 Q 320 272 300 256" 
+          fill="none" 
+          stroke="rgba(255,255,255,0.6)" 
+          stroke-width="2">
+      <animate attributeName="stroke-opacity" 
+               values="0.2;0.8;0.2" 
+               dur="3s" 
+               repeatCount="indefinite"/>
+    </path>
+    
+    <!-- Onda 2 -->
+    <path d="M 310 256 Q 325 245 340 256 Q 325 267 310 256" 
+          fill="none" 
+          stroke="rgba(255,255,255,0.6)" 
+          stroke-width="2">
+      <animate attributeName="stroke-opacity" 
+               values="0.2;0.8;0.2" 
+               dur="3s" 
+               begin="0.5s"
+               repeatCount="indefinite"/>
+    </path>
+    
+    <!-- Onda 3 -->
+    <path d="M 320 256 Q 330 250 340 256 Q 330 262 320 256" 
+          fill="none" 
+          stroke="rgba(255,255,255,0.6)" 
+          stroke-width="2">
+      <animate attributeName="stroke-opacity" 
+               values="0.2;0.8;0.2" 
+               dur="3s" 
+               begin="1s"
+               repeatCount="indefinite"/>
+    </path>
+  </g>
+  
+  <!-- Indicador de versión (sutil) -->
+  <g opacity="0.7">
+    <text x="256" y="440" 
+          text-anchor="middle" 
+          fill="rgba(255,255,255,0.8)" 
+          font-family="'Segoe UI', Arial, sans-serif" 
+          font-size="18" 
+          font-weight="normal">
+      v3.0
+    </text>
+  </g>
+  
+  <!-- Efecto de brillo en el borde -->
+  <circle cx="256" cy="256" r="240" 
+          fill="none" 
+          stroke="url(#bluetoothGradient)" 
+          stroke-width="4" 
+          opacity="0.3">
+    <animate attributeName="stroke-opacity" 
+             values="0.1;0.5;0.1" 
+             dur="4s" 
+             repeatCount="indefinite"/>
+  </circle>
+  
+</svg>
