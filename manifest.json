@@ -1,0 +1,233 @@
+{
+  "name": "PWA Controlador del Sensor CTIM3 por BLE de Huella Estructural y Symbiot Technologies",
+  "short_name": "HUELLA BLE v3.0",
+  "description": "Progressive Web App para control del Sensor CTIM3 via Bluetooth Low Energy. Compatible con firmware v2.3.016 de ESP32-S3-DEVKITC-1 (N8R8) con ADXL355 Accelerometer.",
+  "version": "3.0.0",
+  "manifest_version": 3,
+  
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  
+  "theme_color": "#00008B",
+  "background_color": "#00008B",
+  
+  "icons": [
+    {
+      "src": "/icon-48.png",
+      "sizes": "48x48",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-72.png", 
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-96.png",
+      "sizes": "96x96", 
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-128.png",
+      "sizes": "128x128",
+      "type": "image/png", 
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512", 
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  
+  "categories": [
+    "utilities",
+    "productivity", 
+    "tools",
+    "bluetooth",
+    "iot",
+    "science",
+    "engineering"
+  ],
+  
+  "screenshots": [
+    {
+      "src": "/screenshot-dashboard.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Dashboard principal con información del dispositivo CTIM3"
+    },
+    {
+      "src": "/screenshot-streaming.png", 
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Vista de streaming de datos en tiempo real"
+    },
+    {
+      "src": "/screenshot-config.png",
+      "sizes": "1080x1920", 
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Configuración del sensor ADXL355"
+    }
+  ],
+  
+  "shortcuts": [
+    {
+      "name": "Escanear Dispositivos",
+      "short_name": "Escanear",
+      "description": "Buscar dispositivos HUELLA CTIM3 cercanos",
+      "url": "/?action=scan",
+      "icons": [
+        { 
+          "src": "/icon-96.png", 
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Streaming de Datos",
+      "short_name": "Streaming", 
+      "description": "Iniciar streaming de datos del acelerómetro",
+      "url": "/?action=stream",
+      "icons": [
+        {
+          "src": "/icon-96.png",
+          "sizes": "96x96", 
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Configuración",
+      "short_name": "Config",
+      "description": "Configurar parámetros del sensor",
+      "url": "/?action=config", 
+      "icons": [
+        {
+          "src": "/icon-96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  
+  "related_applications": [],
+  "prefer_related_applications": false,
+  
+  "permissions": [
+    "bluetooth"
+  ],
+  
+  "features": [
+    "bluetooth",
+    "wake-lock",
+    "idle-detection"
+  ],
+  
+  "protocol_handlers": [
+    {
+      "protocol": "web+huella",
+      "url": "/?protocol=%s"
+    }
+  ],
+  
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  
+  "handle_links": "preferred",
+  
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  },
+  
+  "file_handlers": [
+    {
+      "action": "/",
+      "accept": {
+        "text/csv": [".csv"],
+        "application/json": [".json"]
+      }
+    }
+  ],
+  
+  "share_target": {
+    "action": "/share",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url",
+      "files": [
+        {
+          "name": "file",
+          "accept": ["text/csv", "application/json"]
+        }
+      ]
+    }
+  },
+  
+  "developer": {
+    "name": "Symbiot Technologies",
+    "url": "https://symbiot.tech"
+  },
+  
+  "iarc_rating_id": "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7",
+  
+  "lang": "es",
+  "dir": "ltr",
+  
+  "custom": {
+    "firmware_compatibility": {
+      "version": "2.3.016",
+      "platform": "ESP32-S3-DEVKITC-1 (N8R8)",
+      "sensor": "ADXL355 Accelerometer",
+      "ble_service_uuid": "12345678-1234-5678-1234-56789abcdef0"
+    },
+    "azure_deployment": {
+      "service_name": "huella-ble-control-20250716130811.azurewebsites.net",
+      "resource_group": "rg-huella-ble-pwa",
+      "region": "East US",
+      "runtime": "Node.js 20-lts"
+    },
+    "technical_specs": {
+      "web_bluetooth_required": true,
+      "https_required": true,
+      "supported_browsers": [
+        "Chrome 80+",
+        "Edge 80+",
+        "Chrome Android 80+"
+      ],
+      "min_android_version": "6.0",
+      "data_formats": ["CSV", "JSON"],
+      "max_streaming_duration": 300
+    },
+    "ble_characteristics": {
+      "command": "12345678-1234-5678-1234-56789abcdef1",
+      "status": "12345678-1234-5678-1234-56789abcdef2", 
+      "data": "12345678-1234-5678-1234-56789abcdef3",
+      "config": "12345678-1234-5678-1234-56789abcdef4",
+      "info": "12345678-1234-5678-1234-56789abcdef5",
+      "params": "12345678-1234-5678-1234-56789abcdef6",
+      "sync": "12345678-1234-5678-1234-56789abcdef7"
+    }
+  }
+}
