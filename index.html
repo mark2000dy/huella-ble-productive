@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<!--
+PWA Controlador del Sensor CTIM3 por BLE de Huella Estructural y Symbiot Technologies
+Versión: 3.0.0
+Compatible con: Firmware CTIM3 v2.3.016, ESP32-S3-DEVKITC-1 (N8R8), ADXL355 Accelerometer
+Azure Service: huella-ble-control-20250716130811.azurewebsites.net
+Resource Group: rg-huella-ble-pwa
+Fecha: 2025-07-22
+-->
+<html lang="es" data-theme="night">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>HUELLA BLE Control v3.0</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="description" content="PWA Controlador del Sensor CTIM3 por BLE de Huella Estructural y Symbiot Technologies - Compatible con firmware v2.3.016">
+    <meta name="theme-color" content="#00008B">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="HUELLA BLE v3.0">
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <!-- Security and Performance -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="msapplication-tap-highlight" content="no">
+    
+    <!-- Icons -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" href="/icon-192.png">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    
+    <!-- External CSS Libraries -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUa+IgaUkKpRKkJsjq2+1PQTe7pYKBzUq0z0p0wkEWl6h3u4/z8sD8wIR8t9P" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/app.css">
+    <link rel="stylesheet" href="/css/theme.css">
+    
+    <!-- Preload Critical Resources -->
+    <link rel="preload" href="/js/app.js" as="script">
+    <link rel="preload" href="/js/ble-service.js" as="script">
+</head>
+<body data-theme="night">
+    <!-- Header Principal -->
+    <header class="header-main">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h1 class="header-title">
+                        <i class="bi bi-bluetooth"></i>
+                        HUELLA BLE Control
+                        <span class="version-badge">v3.0</span>
+                    </h1>
+                    <p class="header-subtitle">Sensor CTIM3 • Firmware v2.3.016 • Symbiot Technologies</p>
+                </div>
+                <div class="col-auto">
+                    <div class="header-controls">
+                        <!-- Indicador de Conexión -->
+                        <span id="connectionIndicator" class="status-badge status-disconnected">
+                            <i class="bi bi-circle-fill"></i> Desconectado
+                        </span>
+                        
+                        <!-- Toggle de Tema -->
+                        <button id="themeToggle" class="btn btn-outline-light btn-sm ms-2" title="Cambiar tema">
+                            <i class="bi bi-moon-fill"></i>
+                        </button>
+                        
+                        <!-- Botón de Desconexión -->
+                        <button id="disconnectButton" class="btn btn-danger btn-sm ms-2" style="display: none;" title="Desconectar">
+                            <i class="bi bi-x-circle"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navegación de Pestañas -->
+    <nav class="nav-tabs-container">
+        <div class="container-fluid">
+            <ul class="nav nav-tabs nav-fill" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" onclick="switchTab('dashboard')" type="button" role="tab">
+                        <i class="bi bi-speedometer2"></i> Dashboard
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" onclick="switchTab('streaming')" type="button" role="tab">
+                        <i class="bi bi-graph-up"></i> Datos
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" onclick="switchTab('config')" type="button" role="tab">
+                        <i class="bi bi-gear"></i> Config
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" onclick="switchTab('logs')" type="button" role="tab">
+                        <i class="bi bi-terminal"></i> Logs
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Contenido Principal -->
+    <main class="main-content">
+        <div class="container-fluid">
+            
+            <!-- Dashboard Tab -->
+            <div id="dashboard" class="tab-content active">
+                <div class="row g-4">
+                    <!-- Información del Dispositivo -->
+                    <div class="col-12 col-lg-8">
+                        <div class="card device-info-card">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <i class="bi bi-info-circle"></i> Información del Dispositivo
+                                </h5>
+                                <div id="deviceInfo" class="device-info">
+                                    <p class="no-device-msg">
+                                        <i class="bi bi-bluetooth"></i>
+                                        No hay dispositivo conectado
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Controles Principales -->
+                    <div class="col-12 col-lg-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <i class="bi bi-play-circle"></i> Controles
+                                </h5>
+                                <div class="d-grid gap-2">
+                                    <button id="scanButton" class="btn btn-primary">
+                                        <i class="bi bi-search"></i> Buscar Dispositivos
+                                    </button>
+                                    <button id="connectButton" class="btn btn-success" disabled>
+                                        <i class="bi bi-link"></i> Conectar
+                                    </button>
+                                    <button id="startButton" class="btn btn-warning" disabled>
+                                        <i class="bi bi-play"></i> Iniciar Sensor
+                                    </button>
+                                    <button id="stopButton" class="btn btn-danger" disabled>
+                                        <i class="bi bi-stop"></i> Detener Sensor
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Estado del Sistema -->
+                <div class="row g-4 mt-3">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <i class="bi bi-activity"></i> Estado del Sistema
+                                </h5>
+                                <div class="row">
+                                    <div class="col-md-3 col-6">
+                                        <div class="status-item">
+                                            <span class="status-label">Bluetooth:</span>
+                                            <span id="bluetoothStatus" class="status-value">Verificando...</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-6">
+                                        <div class="status-item">
+                                            <span class="status-label">Firmware:</span>
+                                            <span id="firmwareStatus" class="status-value">v2.3.016</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-6">
+                                        <div class="status-item">
+                                            <span class="status-label">Batería:</span>
+                                            <span id="batteryStatus" class="status-value">--</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-6">
+                                        <div class="status-item">
+                                            <span class="status-label">Temperatura:</span>
+                                            <span id="temperatureStatus" class="status-value">--</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Streaming Tab -->
+            <div id="streaming" class="tab-content">
+                <div class="row g-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="card-title mb-0">
+                                        <i class="bi bi-graph-up"></i> Datos en Tiempo Real
+                                    </h5>
+                                    <div class="streaming-controls">
+                                        <select id="streamDuration" class="form-select form-select-sm d-inline-block w-auto me-2">
+                                            <option value="10">10 segundos</option>
+                                            <option value="20">20 segundos</option>
+                                            <option value="30" selected>30 segundos</option>
+                                            <option value="60">60 segundos</option>
+                                        </select>
+                                        <button id="startStreamBtn" class="btn btn-success btn-sm me-1" disabled>
+                                            <i class="bi bi-play"></i> Iniciar
+                                        </button>
+                                        <button id="stopStreamBtn" class="btn btn-danger btn-sm me-1" disabled>
+                                            <i class="bi bi-stop"></i> Detener
+                                        </button>
+                                        <button id="exportBtn" class="btn btn-info btn-sm" disabled>
+                                            <i class="bi bi-download"></i> Exportar
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <!-- Gráfico de Datos -->
+                                <div class="chart-container">
+                                    <canvas id="dataChart" width="400" height="200"></canvas>
+                                </div>
+                                
+                                <!-- Información de Streaming -->
+                                <div class="streaming-info mt-3">
+                                    <div class="row text-center">
+                                        <div class="col-3">
+                                            <small class="text-muted">Muestras:</small>
+                                            <div id="sampleCount" class="fw-bold">0</div>
+                                        </div>
+                                        <div class="col-3">
+                                            <small class="text-muted">Frecuencia:</small>
+                                            <div id="sampleRate" class="fw-bold">0 Hz</div>
+                                        </div>
+                                        <div class="col-3">
+                                            <small class="text-muted">X (g):</small>
+                                            <div id="lastX" class="fw-bold">--</div>
+                                        </div>
+                                        <div class="col-3">
+                                            <small class="text-muted">Y (g):</small>
+                                            <div id="lastY" class="fw-bold">--</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Configuration Tab -->
+            <div id="config" class="tab-content">
+                <div class="row g-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <i class="bi bi-gear"></i> Configuración del Sensor
+                                </h5>
+                                <form id="configForm">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="sensorFreq" class="form-label">Frecuencia de Muestreo</label>
+                                                <select class="form-control" id="sensorFreq" disabled>
+                                                    <option value="125">125 Hz</option>
+                                                    <option value="250" selected>250 Hz</option>
+                                                    <option value="500">500 Hz</option>
+                                                    <option value="1000">1000 Hz</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="sensorRange" class="form-label">Rango del Acelerómetro</label>
+                                                <select class="form-control" id="sensorRange" disabled>
+                                                    <option value="2" selected>±2g</option>
+                                                    <option value="4">±4g</option>
+                                                    <option value="8">±8g</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="wifiSSID" class="form-label">WiFi SSID</label>
+                                                <input type="text" class="form-control" id="wifiSSID" placeholder="Nombre de la red WiFi" disabled>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="wifiPassword" class="form-label">WiFi Password</label>
+                                                <input type="password" class="form-control" id="wifiPassword" placeholder="Contraseña WiFi" disabled>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Factores de Calibración</label>
+                                                <div class="row">
+                                                    <div class="col-4">
+                                                        <input type="number" class="form-control" id="calX" placeholder="X" step="0.01" disabled>
+                                                    </div>
+                                                    <div class="col-4">
+                                                        <input type="number" class="form-control" id="calY" placeholder="Y" step="0.01" disabled>
+                                                    </div>
+                                                    <div class="col-4">
+                                                        <input type="number" class="form-control" id="calZ" placeholder="Z" step="0.01" disabled>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Información del Dispositivo</label>
+                                                <div id="deviceDetails" class="device-details">
+                                                    <small class="text-muted">Conecte un dispositivo para ver detalles</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="text-center">
+                                        <button type="button" class="btn btn-primary me-2" onclick="saveConfiguration()" disabled id="saveConfigButton">
+                                            <i class="bi bi-save"></i> Guardar Configuración
+                                        </button>
+                                        <button type="button" class="btn btn-secondary" onclick="loadConfiguration()" disabled id="loadConfigButton">
+                                            <i class="bi bi-arrow-clockwise"></i> Recargar
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Logs Tab -->
+            <div id="logs" class="tab-content">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="card-title mb-0">
+                                        <i class="bi bi-terminal"></i> Logs del Sistema
+                                    </h5>
+                                    <div class="log-controls">
+                                        <button class="btn btn-secondary btn-sm me-1" onclick="clearDebugLog()">
+                                            <i class="bi bi-trash"></i> Limpiar
+                                        </button>
+                                        <button class="btn btn-primary btn-sm me-1" onclick="exportDebugLog()">
+                                            <i class="bi bi-download"></i> Exportar
+                                        </button>
+                                        <button class="btn btn-info btn-sm" onclick="debugBLEInfo()">
+                                            <i class="bi bi-info-circle"></i> Info Debug
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="log-output" id="logOutput"></div>
+                                <div class="mt-2">
+                                    <small class="text-muted">
+                                        <i class="bi bi-info-circle"></i>
+                                        Los logs se guardan automáticamente y se pueden exportar
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </main>
+
+    <!-- Floating Action Button -->
+    <button class="fab" onclick="scanForHuellaDevices()" title="Buscar Dispositivo BLE">
+        <i class="bi bi-bluetooth"></i>
+    </button>
+
+    <!-- Modal de PIN -->
+    <div class="modal fade" id="pinModal" tabindex="-1" aria-labelledby="pinModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="pinModalLabel">
+                        <i class="bi bi-shield-lock"></i> Autenticación BLE
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Ingrese el PIN de 6 dígitos del dispositivo HUELLA:</p>
+                    <input type="text" class="form-control" id="pinInput" placeholder="123456" maxlength="6" pattern="[0-9]{6}">
+                    <small class="form-text text-muted mt-2">PIN por defecto: 123456</small>
+                    <div id="pinError" class="alert alert-danger mt-2" style="display: none;"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="submitPin()">
+                        <i class="bi bi-unlock"></i> Conectar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay - CORREGIDO SIN BLOQUEO -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-content">
+            <div class="spinner-border text-primary mb-3" role="status">
+                <span class="visually-hidden">Cargando...</span>
+            </div>
+            <div class="loading-text">Procesando...</div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" crossorigin="anonymous"></script>
+    
+    <!-- PWA Scripts -->
+    <script src="/js/storage-service.js"></script>
+    <script src="/js/chart-service.js"></script>
+    <script src="/js/ble-service.js"></script>
+    <script src="/js/app.js"></script>
+
+    <!-- PWA Service Worker Registration -->
+    <script>
+        // Register Service Worker for PWA
+        if ('serviceWorker' in navigator && location.protocol === 'https:') {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(registration => {
+                        console.log('SW registered: ', registration);
+                    })
+                    .catch(registrationError => {
+                        console.log('SW registration failed: ', registrationError);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>
