@@ -1,0 +1,443 @@
+/*
+ * PWA Controlador del Sensor CTIM3 por BLE de Huella Estructural y Symbiot Technologies
+ * Archivo: css/theme.css
+ * Descripción: Sistema de temas día/noche para PWA
+ * Versión: 3.0.0
+ * Compatible con: Firmware CTIM3 v2.3.016
+ * Fecha: 2025-07-22
+ */
+
+/* ============================================================================
+   VARIABLES DE TEMAS
+   ============================================================================ */
+
+/* Tema Nocturno (Por defecto) */
+:root,
+[data-theme="night"] {
+    /* Colores de fondo */
+    --bg-primary: #0d1117;
+    --bg-secondary: #161b22;
+    --bg-accent: #21262d;
+    --bg-overlay: rgba(13, 17, 23, 0.95);
+    
+    /* Colores de texto */
+    --text-primary: #ffffff;
+    --text-secondary: #8b949e;
+    --text-muted: #6a737d;
+    --text-inverse: #212529;
+    
+    /* Colores de bordes */
+    --border-color: #30363d;
+    --border-light: #40454a;
+    --border-focus: #4493f8;
+    
+    /* Colores específicos del tema nocturno */
+    --card-bg: #161b22;
+    --input-bg: #0d1117;
+    --modal-bg: #161b22;
+    --header-bg: linear-gradient(135deg, #00008B, #4169E1);
+    
+    /* Sombras para tema nocturno */
+    --shadow-light: 0 2px 4px rgba(0, 0, 0, 0.4);
+    --shadow-medium: 0 4px 8px rgba(0, 0, 0, 0.5);
+    --shadow-heavy: 0 8px 16px rgba(0, 0, 0, 0.6);
+    
+    /* Estados específicos */
+    --hover-bg: rgba(255, 255, 255, 0.05);
+    --active-bg: rgba(255, 255, 255, 0.1);
+    
+    /* Chart colors para tema nocturno */
+    --chart-grid: #30363d;
+    --chart-text: #ffffff;
+    --chart-bg: #0d1117;
+}
+
+/* Tema Diurno */
+[data-theme="day"] {
+    /* Colores de fondo */
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8f9fa;
+    --bg-accent: #e9ecef;
+    --bg-overlay: rgba(248, 249, 250, 0.95);
+    
+    /* Colores de texto */
+    --text-primary: #212529;
+    --text-secondary: #6c757d;
+    --text-muted: #868e96;
+    --text-inverse: #ffffff;
+    
+    /* Colores de bordes */
+    --border-color: #dee2e6;
+    --border-light: #e9ecef;
+    --border-focus: #86b7fe;
+    
+    /* Colores específicos del tema diurno */
+    --card-bg: #ffffff;
+    --input-bg: #ffffff;
+    --modal-bg: #ffffff;
+    --header-bg: linear-gradient(135deg, #00008B, #4169E1);
+    
+    /* Sombras para tema diurno */
+    --shadow-light: 0 2px 4px rgba(0, 0, 0, 0.1);
+    --shadow-medium: 0 4px 8px rgba(0, 0, 0, 0.15);
+    --shadow-heavy: 0 8px 16px rgba(0, 0, 0, 0.2);
+    
+    /* Estados específicos */
+    --hover-bg: rgba(0, 0, 0, 0.05);
+    --active-bg: rgba(0, 0, 0, 0.1);
+    
+    /* Chart colors para tema diurno */
+    --chart-grid: #dee2e6;
+    --chart-text: #212529;
+    --chart-bg: #ffffff;
+}
+
+/* ============================================================================
+   APLICACIÓN DE TEMAS
+   ============================================================================ */
+
+/* Transiciones suaves para cambio de tema */
+*,
+*::before,
+*::after {
+    transition: background-color 0.3s ease, 
+                color 0.3s ease, 
+                border-color 0.3s ease,
+                box-shadow 0.3s ease !important;
+}
+
+/* ============================================================================
+   COMPONENTES ESPECÍFICOS POR TEMA
+   ============================================================================ */
+
+/* Header */
+.header-main {
+    background: var(--header-bg);
+    box-shadow: var(--shadow-medium);
+}
+
+/* Cards */
+.card {
+    background-color: var(--card-bg);
+    border-color: var(--border-color);
+    box-shadow: var(--shadow-light);
+}
+
+.card:hover {
+    box-shadow: var(--shadow-medium);
+}
+
+/* Navegación */
+.nav-tabs-container {
+    background-color: var(--bg-secondary);
+    border-bottom-color: var(--border-color);
+}
+
+.nav-tabs .nav-link {
+    color: var(--text-secondary);
+}
+
+.nav-tabs .nav-link:hover {
+    background-color: var(--hover-bg);
+    color: var(--primary-color);
+}
+
+.nav-tabs .nav-link.active {
+    background-color: var(--bg-primary);
+    color: var(--primary-color);
+}
+
+/* ============================================================================
+   FORMULARIOS Y CONTROLES
+   ============================================================================ */
+
+/* Inputs */
+.form-control,
+.form-select {
+    background-color: var(--input-bg);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+.form-control:focus,
+.form-select:focus {
+    background-color: var(--input-bg);
+    border-color: var(--border-focus);
+    color: var(--text-primary);
+    box-shadow: 0 0 0 0.2rem rgba(var(--primary-color-rgb), 0.25);
+}
+
+.form-control:disabled,
+.form-select:disabled {
+    background-color: var(--bg-accent);
+    color: var(--text-muted);
+}
+
+/* Labels */
+.form-label {
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+/* ============================================================================
+   MODAL
+   ============================================================================ */
+.modal-content {
+    background-color: var(--modal-bg);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+.modal-header {
+    border-bottom-color: var(--border-color);
+}
+
+.modal-footer {
+    border-top-color: var(--border-color);
+}
+
+/* Botón de cerrar modal según tema */
+[data-theme="night"] .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+[data-theme="day"] .btn-close {
+    filter: none;
+}
+
+/* ============================================================================
+   LOGS DEL SISTEMA
+   ============================================================================ */
+
+/* Log output con tema personalizado terminal */
+.log-output {
+    background-color: #000000;
+    color: #00ff00;
+    border: 1px solid var(--border-color);
+}
+
+[data-theme="day"] .log-output {
+    background-color: #1e1e1e;
+    color: #00ff00;
+}
+
+/* ============================================================================
+   ESTADOS Y INDICADORES
+   ============================================================================ */
+
+/* Status items según tema */
+.status-item {
+    background-color: var(--bg-accent);
+    border: 1px solid var(--border-light);
+}
+
+/* Device info específico por tema */
+.device-details {
+    background-color: var(--bg-accent);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+}
+
+/* ============================================================================
+   GRÁFICOS Y VISUALIZACIONES
+   ============================================================================ */
+
+/* Chart container según tema */
+.chart-container {
+    background-color: var(--chart-bg);
+    border: 1px solid var(--border-color);
+}
+
+/* Streaming info según tema */
+.streaming-info {
+    background-color: var(--bg-accent);
+    border: 1px solid var(--border-light);
+}
+
+/* ============================================================================
+   LOADING OVERLAY
+   ============================================================================ */
+.loading-overlay {
+    background-color: var(--bg-overlay);
+    backdrop-filter: blur(4px);
+}
+
+.loading-content {
+    background-color: var(--modal-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    box-shadow: var(--shadow-heavy);
+}
+
+/* ============================================================================
+   FLOATING ACTION BUTTON
+   ============================================================================ */
+.fab {
+    box-shadow: var(--shadow-medium);
+}
+
+.fab:hover {
+    box-shadow: var(--shadow-heavy);
+}
+
+/* ============================================================================
+   TOGGLE DE TEMA
+   ============================================================================ */
+#themeToggle {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    transition: all 0.3s ease;
+}
+
+#themeToggle:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: scale(1.05);
+}
+
+/* Icono específico según tema activo */
+[data-theme="night"] #themeToggle .bi::before {
+    content: "\f497"; /* moon-fill */
+}
+
+[data-theme="day"] #themeToggle .bi::before {
+    content: "\f5a2"; /* sun-fill */
+}
+
+/* ============================================================================
+   ALERTAS Y NOTIFICACIONES
+   ============================================================================ */
+.alert {
+    border-color: var(--border-color);
+}
+
+#pinError {
+    background-color: var(--danger-color);
+    border-color: #dc3545;
+    color: white;
+}
+
+/* ============================================================================
+   MEJORAS ESPECÍFICAS PARA TEMAS
+   ============================================================================ */
+
+/* Hover effects según tema */
+[data-theme="night"] .card:hover {
+    background-color: #1c2128;
+}
+
+[data-theme="day"] .card:hover {
+    background-color: #f8f9fa;
+}
+
+/* Selection según tema */
+[data-theme="night"] ::selection {
+    background-color: rgba(100, 149, 237, 0.3);
+    color: white;
+}
+
+[data-theme="day"] ::selection {
+    background-color: rgba(0, 0, 139, 0.2);
+    color: #212529;
+}
+
+/* ============================================================================
+   RESPONSIVE THEMING
+   ============================================================================ */
+@media (max-width: 768px) {
+    /* Ajustes específicos de tema para móviles */
+    .header-main {
+        box-shadow: var(--shadow-light);
+    }
+    
+    .card {
+        box-shadow: var(--shadow-light);
+    }
+    
+    .fab {
+        box-shadow: var(--shadow-medium);
+    }
+}
+
+/* ============================================================================
+   SISTEMA DE DETECCIÓN AUTOMÁTICA DE TEMA
+   ============================================================================ */
+
+/* Respeta la preferencia del sistema si no hay tema guardado */
+@media (prefers-color-scheme: light) {
+    :root:not([data-theme]) {
+        --bg-primary: #ffffff;
+        --bg-secondary: #f8f9fa;
+        --bg-accent: #e9ecef;
+        --text-primary: #212529;
+        --text-secondary: #6c757d;
+        --text-muted: #868e96;
+        --border-color: #dee2e6;
+        --card-bg: #ffffff;
+        --input-bg: #ffffff;
+        --modal-bg: #ffffff;
+        --chart-bg: #ffffff;
+        --chart-grid: #dee2e6;
+        --chart-text: #212529;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme]) {
+        --bg-primary: #0d1117;
+        --bg-secondary: #161b22;
+        --bg-accent: #21262d;
+        --text-primary: #ffffff;
+        --text-secondary: #8b949e;
+        --text-muted: #6a737d;
+        --border-color: #30363d;
+        --card-bg: #161b22;
+        --input-bg: #0d1117;
+        --modal-bg: #161b22;
+        --chart-bg: #0d1117;
+        --chart-grid: #30363d;
+        --chart-text: #ffffff;
+    }
+}
+
+/* ============================================================================
+   ANIMACIONES DE CAMBIO DE TEMA
+   ============================================================================ */
+.theme-transition {
+    transition: background-color 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                color 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                border-color 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Aplicar animación suave durante cambio de tema */
+body.changing-theme * {
+    transition: background-color 0.3s ease,
+                color 0.3s ease,
+                border-color 0.3s ease !important;
+}
+
+/* ============================================================================
+   ACCESIBILIDAD Y CONTRASTE
+   ============================================================================ */
+
+/* Asegurar contraste adecuado para accesibilidad */
+@media (prefers-contrast: high) {
+    :root {
+        --border-color: #666666;
+        --text-secondary: #333333;
+    }
+    
+    [data-theme="night"] {
+        --border-color: #999999;
+        --text-secondary: #cccccc;
+    }
+}
+
+/* Reducir movimiento si el usuario lo prefiere */
+@media (prefers-reduced-motion: reduce) {
+    .theme-transition,
+    body.changing-theme * {
+        transition: none !important;
+    }
+}
