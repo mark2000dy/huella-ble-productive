@@ -1,0 +1,398 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "title": "HUELLA BLE PWA v3.0 - Azure Deployment Template",
+    "description": "PWA Controlador del Sensor CTIM3 por BLE de Huella Estructural y Symbiot Technologies",
+    "version": "3.0.0",
+    "compatibility": {
+      "firmware": "2.3.016",
+      "nodejs": "20+",
+      "platform": "Azure Web Apps"
+    },
+    "author": "Symbiot Technologies",
+    "date": "2025-07-22"
+  },
+  "parameters": {
+    "appName": {
+      "type": "string",
+      "defaultValue": "huella-ble-control",
+      "metadata": {
+        "description": "Nombre base de la aplicación"
+      }
+    },
+    "appServicePlanName": {
+      "type": "string",
+      "defaultValue": "plan-huella-ble-linux",
+      "metadata": {
+        "description": "Nombre del App Service Plan"
+      }
+    },
+    "resourceGroupName": {
+      "type": "string",
+      "defaultValue": "rg-huella-ble-pwa",
+      "metadata": {
+        "description": "Nombre del Resource Group"
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "allowedValues": [
+        "East US",
+        "West US 2",
+        "West Europe",
+        "North Europe",
+        "Southeast Asia",
+        "East Asia"
+      ],
+      "metadata": {
+        "description": "Ubicación de los recursos de Azure"
+      }
+    },
+    "sku": {
+      "type": "string",
+      "defaultValue": "B1",
+      "allowedValues": [
+        "F1",
+        "D1",
+        "B1",
+        "B2",
+        "B3",
+        "S1",
+        "S2",
+        "S3",
+        "P1v2",
+        "P2v2",
+        "P3v2"
+      ],
+      "metadata": {
+        "description": "SKU del App Service Plan"
+      }
+    },
+    "nodeVersion": {
+      "type": "string",
+      "defaultValue": "20-lts",
+      "allowedValues": [
+        "18-lts",
+        "20-lts",
+        "latest"
+      ],
+      "metadata": {
+        "description": "Versión de Node.js"
+      }
+    },
+    "enableApplicationInsights": {
+      "type": "bool",
+      "defaultValue": true,
+      "metadata": {
+        "description": "Habilitar Application Insights para monitoreo"
+      }
+    },
+    "enableAutoscaling": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Habilitar escalado automático"
+      }
+    },
+    "customDomainName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Dominio personalizado (opcional)"
+      }
+    }
+  },
+  "variables": {
+    "uniqueAppName": "[concat(parameters('appName'), '-', uniqueString(resourceGroup().id))]",
+    "applicationInsightsName": "[concat('ai-', variables('uniqueAppName'))]",
+    "storageAccountName": "[concat('st', uniqueString(resourceGroup().id))]",
+    "functionAppName": "[concat('func-', variables('uniqueAppName'))]",
+    "keyVaultName": "[concat('kv-', uniqueString(resourceGroup().id))]",
+    "tags": {
+      "Project": "HUELLA BLE PWA",
+      "Version": "3.0.0",
+      "Environment": "Production",
+      "Owner": "Symbiot Technologies",
+      "Firmware": "2.3.016",
+      "Technology": "Node.js PWA BLE"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Web/serverfarms",
+      "apiVersion": "2022-03-01",
+      "name": "[parameters('appServicePlanName')]",
+      "location": "[parameters('location')]",
+      "tags": "[variables('tags')]",
+      "sku": {
+        "name": "[parameters('sku')]",
+        "tier": "[if(equals(parameters('sku'), 'F1'), 'Free', if(equals(parameters('sku'), 'D1'), 'Shared', if(contains(parameters('sku'), 'B'), 'Basic', if(contains(parameters('sku'), 'S'), 'Standard', 'PremiumV2'))))]",
+        "size": "[parameters('sku')]",
+        "capacity": "[if(parameters('enableAutoscaling'), 2, 1)]"
+      },
+      "kind": "linux",
+      "properties": {
+        "reserved": true,
+        "targetWorkerCount": "[if(parameters('enableAutoscaling'), 2, 1)]",
+        "targetWorkerSizeId": 0
+      }
+    },
+    {
+      "type": "Microsoft.Web/sites",
+      "apiVersion": "2022-03-01",
+      "name": "[variables('uniqueAppName')]",
+      "location": "[parameters('location')]",
+      "tags": "[variables('tags')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
+        "[if(parameters('enableApplicationInsights'), resourceId('Microsoft.Insights/components', variables('applicationInsightsName')), '')]"
+      ],
+      "kind": "app,linux",
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "properties": {
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
+        "reserved": true,
+        "httpsOnly": true,
+        "clientAffinityEnabled": false,
+        "siteConfig": {
+          "linuxFxVersion": "[concat('NODE|', parameters('nodeVersion'))]",
+          "alwaysOn": "[not(equals(parameters('sku'), 'F1'))]",
+          "http20Enabled": true,
+          "minTlsVersion": "1.2",
+          "ftpsState": "Disabled",
+          "remoteDebuggingEnabled": false,
+          "httpLoggingEnabled": true,
+          "logsDirectorySizeLimit": 100,
+          "detailedErrorLoggingEnabled": true,
+          "requestTracingEnabled": true,
+          "appSettings": [
+            {
+              "name": "WEBSITE_NODE_DEFAULT_VERSION",
+              "value": "[if(equals(parameters('nodeVersion'), '18-lts'), '18.19.0', if(equals(parameters('nodeVersion'), '20-lts'), '20.11.0', '20.11.0'))]"
+            },
+            {
+              "name": "NODE_ENV",
+              "value": "production"
+            },
+            {
+              "name": "PWA_VERSION",
+              "value": "3.0.0"
+            },
+            {
+              "name": "FIRMWARE_VERSION",
+              "value": "2.3.016"
+            },
+            {
+              "name": "SERVICE_NAME",
+              "value": "[variables('uniqueAppName')]"
+            },
+            {
+              "name": "RESOURCE_GROUP",
+              "value": "[parameters('resourceGroupName')]"
+            },
+            {
+              "name": "AZURE_REGION",
+              "value": "[parameters('location')]"
+            },
+            {
+              "name": "WEBSITE_RUN_FROM_PACKAGE",
+              "value": "1"
+            },
+            {
+              "name": "SCM_DO_BUILD_DURING_DEPLOYMENT",
+              "value": "true"
+            },
+            {
+              "name": "ENABLE_ORYX_BUILD",
+              "value": "true"
+            },
+            {
+              "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
+              "value": "[if(parameters('enableApplicationInsights'), reference(resourceId('Microsoft.Insights/components', variables('applicationInsightsName'))).ConnectionString, '')]"
+            }
+          ],
+          "connectionStrings": [],
+          "metadata": [
+            {
+              "name": "CURRENT_STACK",
+              "value": "node"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "condition": "[parameters('enableApplicationInsights')]",
+      "type": "Microsoft.Insights/components",
+      "apiVersion": "2020-02-02",
+      "name": "[variables('applicationInsightsName')]",
+      "location": "[parameters('location')]",
+      "tags": "[variables('tags')]",
+      "kind": "web",
+      "properties": {
+        "Application_Type": "Node.JS",
+        "Request_Source": "rest",
+        "RetentionInDays": 90,
+        "WorkspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces', concat('law-', variables('uniqueAppName')))]",
+        "IngestionMode": "LogAnalytics",
+        "publicNetworkAccessForIngestion": "Enabled",
+        "publicNetworkAccessForQuery": "Enabled"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.OperationalInsights/workspaces', concat('law-', variables('uniqueAppName')))]"
+      ]
+    },
+    {
+      "condition": "[parameters('enableApplicationInsights')]",
+      "type": "Microsoft.OperationalInsights/workspaces",
+      "apiVersion": "2022-10-01",
+      "name": "[concat('law-', variables('uniqueAppName'))]",
+      "location": "[parameters('location')]",
+      "tags": "[variables('tags')]",
+      "properties": {
+        "sku": {
+          "name": "PerGB2018"
+        },
+        "retentionInDays": 30,
+        "workspaceCapping": {
+          "dailyQuotaGb": 1
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "2022-09-01",
+      "name": "[variables('storageAccountName')]",
+      "location": "[parameters('location')]",
+      "tags": "[variables('tags')]",
+      "sku": {
+        "name": "Standard_LRS"
+      },
+      "kind": "StorageV2",
+      "properties": {
+        "accessTier": "Hot",
+        "allowBlobPublicAccess": true,
+        "allowSharedKeyAccess": true,
+        "encryption": {
+          "services": {
+            "blob": {
+              "enabled": true
+            },
+            "file": {
+              "enabled": true
+            }
+          },
+          "keySource": "Microsoft.Storage"
+        },
+        "minimumTlsVersion": "TLS1_2",
+        "supportsHttpsTrafficOnly": true,
+        "networkAcls": {
+          "defaultAction": "Allow"
+        }
+      }
+    },
+    {
+      "condition": "[parameters('enableAutoscaling')]",
+      "type": "Microsoft.Insights/autoscalesettings",
+      "apiVersion": "2022-10-01",
+      "name": "[concat('autoscale-', variables('uniqueAppName'))]",
+      "location": "[parameters('location')]",
+      "tags": "[variables('tags')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]"
+      ],
+      "properties": {
+        "profiles": [
+          {
+            "name": "Default",
+            "capacity": {
+              "minimum": "1",
+              "maximum": "3",
+              "default": "1"
+            },
+            "rules": [
+              {
+                "metricTrigger": {
+                  "metricName": "CpuPercentage",
+                  "metricResourceUri": "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
+                  "timeGrain": "PT1M",
+                  "statistic": "Average",
+                  "timeWindow": "PT10M",
+                  "timeAggregation": "Average",
+                  "operator": "GreaterThan",
+                  "threshold": 70
+                },
+                "scaleAction": {
+                  "direction": "Increase",
+                  "type": "ChangeCount",
+                  "value": "1",
+                  "cooldown": "PT10M"
+                }
+              },
+              {
+                "metricTrigger": {
+                  "metricName": "CpuPercentage",
+                  "metricResourceUri": "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
+                  "timeGrain": "PT1M",
+                  "statistic": "Average",
+                  "timeWindow": "PT10M",
+                  "timeAggregation": "Average",
+                  "operator": "LessThan",
+                  "threshold": 30
+                },
+                "scaleAction": {
+                  "direction": "Decrease",
+                  "type": "ChangeCount",
+                  "value": "1",
+                  "cooldown": "PT10M"
+                }
+              }
+            ]
+          }
+        ],
+        "enabled": true,
+        "targetResourceUri": "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]"
+      }
+    }
+  ],
+  "outputs": {
+    "appServiceUrl": {
+      "type": "string",
+      "value": "[concat('https://', variables('uniqueAppName'), '.azurewebsites.net')]"
+    },
+    "appServiceName": {
+      "type": "string",
+      "value": "[variables('uniqueAppName')]"
+    },
+    "resourceGroupName": {
+      "type": "string",
+      "value": "[resourceGroup().name]"
+    },
+    "applicationInsightsKey": {
+      "condition": "[parameters('enableApplicationInsights')]",
+      "type": "string",
+      "value": "[if(parameters('enableApplicationInsights'), reference(resourceId('Microsoft.Insights/components', variables('applicationInsightsName'))).InstrumentationKey, '')]"
+    },
+    "storageAccountName": {
+      "type": "string",
+      "value": "[variables('storageAccountName')]"
+    },
+    "deploymentInfo": {
+      "type": "object",
+      "value": {
+        "version": "3.0.0",
+        "firmware": "2.3.016",
+        "nodeVersion": "[parameters('nodeVersion')]",
+        "sku": "[parameters('sku')]",
+        "location": "[parameters('location')]",
+        "timestamp": "[utcNow()]",
+        "applicationInsightsEnabled": "[parameters('enableApplicationInsights')]",
+        "autoscalingEnabled": "[parameters('enableAutoscaling')]"
+      }
+    }
+  }
+}
